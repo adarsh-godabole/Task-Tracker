@@ -1,7 +1,9 @@
 <template>
     <header>
         <h1>{{title}}</h1>
-        <Button @show-add-task="$emit('show-add-task')" text="Add Task" color="green"/>
+        <Button @btn-clk="$emit('show-add-task')" 
+        :text="showAddTask ? 'Close' : 'Add'" 
+        :color="showAddTask ? 'red' : 'green'" />
         <!-- <Button text="Update Task" color="gray"/>
         <Button text="Delete Task" color="red"/> -->
 
@@ -16,7 +18,8 @@ import Button from './Button.vue'
             title:{
                 type:String,
                 default:'Hello'
-            }
+            },
+            showAddTask:Boolean
         },
         components:{
             Button

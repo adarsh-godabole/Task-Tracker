@@ -13,7 +13,7 @@
         },
         methods:{
             onClick(){
-              this.$emit('show-add-task') 
+              this.$emit('btn-clk') 
             }
         },
         emits:['show-add-task']
