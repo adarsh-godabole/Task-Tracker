@@ -3,6 +3,7 @@
     <Header  @show-add-task="showTask" title="Task Tracker" :showAddTask="showAddTask"/>
     <AddTask v-show="showAddTask" @add-task="addTask"/>
     <Tasks @toggle-reminder="togglereminder" @delete-task="deleteTask" :tasks="tasks"/>
+    <Footer />
   </div>
 </template>
 
@@ -10,6 +11,8 @@
 import Header from './components/Header.vue';
 import Tasks from './components/Tasks.vue';
 import AddTask from './components/AddTask.vue';
+import Footer from './components/Footer.vue';
+
 
 
 export default {
@@ -17,7 +20,8 @@ export default {
   components: {
     Header,
     Tasks,
-    AddTask
+    AddTask,
+    Footer
   },
   data(){
     return{
@@ -26,42 +30,87 @@ export default {
     }
   },
   methods:{
-    addTask(newTask){
-      this.tasks=[...this.tasks,newTask]
+    
+    
+    async addTask(newTask){
+      const res = await fetch(`http://localhost:5000/tasks`,{
+        method:'POST',
+        headers:{
+          'Content-type':'application/json'
+         },
+         body:JSON.stringify(newTask)
+      });
+
+      
+
+      const data = await res.json();
+        
+ console.log("DATA is "+data);
+
+      // this.tasks=[...this.tasks,data];
+      this.tasks.push(data)
     },
+
+
     showTask(){
       this.showAddTask=!this.showAddTask;
     },
-    deleteTask(id)
+    async deleteTask(id)
     {
       console.log("ID"+id);
-      this.tasks=this.tasks.filter((task) =>  task.id !== id)
-    },
-    togglereminder(id)
-    {
-      this.tasks = this.tasks.map(
-        (task) => task.id===id ? {...task,reminder:!task.reminder}: task
-      );
-    }
-  },
-  created(){
-    this.tasks = [
+      const res = await fetch(`http://localhost:5000/tasks/${id}`,
       {
-        id:1,
-        text:'Walking',
-        day:'29/09/2021',
-        reminder:true
-      },
-      {
-        id:2,
-        text:'Gym',
-        day:'29/09/2021',
-        reminder:false
-      }
+        method:'DELETE'
+      })
 
-    ]
-    // console.log(this.tasks[0]);
+      res.status===200?this.tasks=this.tasks.filter((task) =>  task.id !== id):alert('Error Deleting')
+      
+    },
+    async togglereminder(id)
+    {
+
+      const taskToToggle = await this.fetchTask(id);
+      const updtask = {...taskToToggle,reminder:!taskToToggle.reminder}
+
+      const res = await fetch(`http://localhost:5000/tasks/${id}`,{
+        method:'PUT',
+        headers:{
+          'Content-type':'application/json'
+         },
+         body:JSON.stringify(updtask)
+
+      })
+
+      const data = await res.json();
+
+      this.tasks = this.tasks.map(
+        (task) => task.id===id ? {...task,reminder:data.reminder}: task
+      );
+    },
+     async fetchTasks()
+     {
+        const res = await fetch('http://localhost:5000/tasks');
+        const data = await res.json();
+        console.log(data);
+        return data;
+  },
+
+  async fetchTask(id)
+     {
+        const res = await fetch(`http://localhost:5000/tasks/${id}`);
+        const data = await res.json();
+        console.log(data);
+        return data;
   }
+  },
+
+  
+  
+  async created(){
+    this.tasks = await this.fetchTasks()
+    console.log("AA");
+  }
+ 
 }
 </script>
 
