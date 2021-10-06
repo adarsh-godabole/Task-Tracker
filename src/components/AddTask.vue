@@ -19,6 +19,11 @@
       <input type="checkbox" v-model="reminder" name="reminder" />
     </div>
 
+
+<div class="form-control form-control-check">
+      <label>Set Current Date</label>
+      <input type="checkbox"  name="cdate" @change="setCurrentdate(this,$event)"/>
+    </div>
     <input type="submit" value="Save Task" class="btn btn-block" />
   </form>
     </div>
@@ -35,6 +40,18 @@
             }
         },
         methods:{
+            setCurrentdate(e,$event){
+              console.log("CHECKED");
+              if($event.target.checked == true){
+                this.day = new Date().toLocaleString()
+            }
+            else
+            {
+              this.day = ''
+            }
+              },
+            
+
             onSubmit(e)
             {
                 e.preventDefault()

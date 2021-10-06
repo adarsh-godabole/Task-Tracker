@@ -1,15 +1,20 @@
 <template>
     <div>
         <footer>
-            <p>Copyright 2021</p>
-            <a href="/about"></a>
+            <p>{{mydate}}</p>
+            
         </footer>
     </div>
 </template>
 
 <script>
     export default {
-        name:'Footer'
+        name:'Footer',
+        data(){
+            return {
+                mydate:new Date().toLocaleString()
+            }
+        }
     }
 </script>
 
